@@ -162,7 +162,7 @@ function catchClickHeat(e)
         {
             clickHeatQuota = clickHeatQuota - 1;
         }
-        params = 's=' + clickHeatSite + '&g=' + clickHeatGroup + '&x=' + x + '&y=' + y + '&w=' + w + '&b=' + clickHeatBrowser + '&c=' + c + '&random=' + Date();
+        params = 'v=' + "vvv" + '&s=' + clickHeatSite + '&g=' + clickHeatGroup + '&x=' + x + '&y=' + y + '&w=' + w + '&b=' + clickHeatBrowser + '&c=' + c + '&t=' + 'click' + '&random=' + Date();
         showClickHeatDebug('Ready to send click data...');
         /* Local request (not starting with "http")? Try an ajax call */
         if (clickHeatServer.indexOf('http') !== 0)
@@ -200,11 +200,11 @@ function catchClickHeat(e)
                             }
                             else if (xmlhttp.status === 404)
                             {
-                                showClickHeatDebug('click.php was not found at: ' + (clickHeatServer !== '' ? clickHeatServer : '/clickheat/click.php') + ' please set clickHeatServer value');
+                                showClickHeatDebug('Endpoint was not found at: ' + (clickHeatServer !== '' ? clickHeatServer : '/clickheat/endpoint') + ' please set clickHeatServer value');
                             }
                             else
                             {
-                                showClickHeatDebug('click.php returned a status code ' + xmlhttp.status + ' with the following error: ' + xmlhttp.responseText);
+                                showClickHeatDebug('Endpoint returned a status code ' + xmlhttp.status + ' with the following error: ' + xmlhttp.responseText);
                             }
                             /* Stop waiting */
                             clickHeatLocalWait = 0;
@@ -218,7 +218,7 @@ function catchClickHeat(e)
         }
         if (sent === false)
         {
-            /* This test is needed, as it includes the call to click.php in the iframe */
+            /* This test is needed, as it includes the call to Endpoint in the iframe */
             if (clickHeatDebug === true)
             {
                 showClickHeatDebug('Click recorded at ' + clickHeatServer + ' with the following parameters:<br/>x = ' + (x + scrollx) + ' (' + x + 'px from left + ' + scrollx + 'px of horizontal scrolling)<br/>y = ' + (y + scrolly) + ' (' + y + 'px from top + ' + scrolly + 'px of vertical scrolling)<br/>width = ' + w + '<br/>browser = ' + clickHeatBrowser + '<br/>click = ' + c + '<br/>site = ' + clickHeatSite + '<br/>group = ' + clickHeatGroup + '<br/><br/>Server answer:<br/>' + '<iframe src="' + clickHeatServer + '?' + params + '" width="700" height="60"></iframe>');

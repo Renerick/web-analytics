@@ -8,9 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using WebAnalytics.Abstraction;
-using WebAnalytics.Abstraction.Db;
-using WebAnalytics.Db.Postgres;
-using WebAnalytics.Db.SimpleWriter;
+using WebAnalytics.Store.Postgres;
 
 namespace WebAnalytics.Tracking
 {
@@ -27,10 +25,8 @@ namespace WebAnalytics.Tracking
         {
             services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(Configuration.GetConnectionString("master")));
 
-            services.AddScoped<IEventStore, PostgresEventStore>();
             services.AddScoped<IInitializer, PostgresInitializer>();
-
-            services.AddScoped<IEventWriter, SimpleEventWriter>();
+            services.AddScoped<IEventWriter, PostgresEventWriter>();
 
             services.AddCors(opt =>
             {

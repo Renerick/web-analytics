@@ -1,4 +1,4 @@
-namespace WebAnalytics.Db.RabbitMqWriter
+namespace WebAnalytics.Store.RabbitMqWriter
 {
     public class RabbitMqWriterWorker
     {

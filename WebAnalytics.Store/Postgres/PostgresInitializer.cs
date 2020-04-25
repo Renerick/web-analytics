@@ -4,7 +4,7 @@ using System.Reflection;
 using DbUp;
 using WebAnalytics.Abstraction;
 
-namespace WebAnalytics.Db.Postgres
+namespace WebAnalytics.Store.Postgres
 {
     public class PostgresInitializer : IInitializer
     {

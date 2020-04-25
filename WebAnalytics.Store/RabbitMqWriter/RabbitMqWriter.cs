@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using WebAnalytics.Abstraction.Db;
+using WebAnalytics.Abstraction;
 using WebAnalytics.Core.Entities;
 
-namespace WebAnalytics.Db.RabbitMqWriter
+namespace WebAnalytics.Store.RabbitMqWriter
 {
     public class RabbitMqWriter : IEventWriter
     {
@@ -18,8 +18,8 @@ namespace WebAnalytics.Db.RabbitMqWriter
 
         public Task WriteErrorAsync(Error error) => throw new System.NotImplementedException();
 
-        public void WriteAction(Action action) => throw new System.NotImplementedException();
+        public void WriteAction(Event @event) => throw new System.NotImplementedException();
 
-        public Task WriteActionAsync(Action action) => throw new System.NotImplementedException();
+        public Task WriteActionAsync(Event @event) => throw new System.NotImplementedException();
     }
 }

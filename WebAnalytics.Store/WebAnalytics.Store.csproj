@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <RootNamespace>WebAnalytics.Db</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

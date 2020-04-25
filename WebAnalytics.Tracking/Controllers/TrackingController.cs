@@ -1,9 +1,9 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using WebAnalytics.Abstraction.Db;
+using WebAnalytics.Abstraction;
 using WebAnalytics.Core.Entities;
 using WebAnalytics.Tracking.Models;
-using Action = WebAnalytics.Core.Entities.Action;
 
 namespace WebAnalytics.Tracking.Controllers
 {
@@ -17,42 +17,20 @@ namespace WebAnalytics.Tracking.Controllers
             EventWriter = eventWriter;
         }
 
-        [HttpPost("Error")]
-        public async Task<IActionResult> PostError(ErrorRequest request)
+        [HttpGet("event")]
+        public async Task<IActionResult> TrackEvent([FromQuery] EventRequest request)
         {
-            var error = new Error();
-
-            await EventWriter.WriteErrorAsync(error);
-
-            return Ok();
-        }
-
-        [HttpPost("Action")]
-        [Consumes("application/x-www-form-urlencoded")]
-        public async Task<IActionResult> PostAction([FromForm]ActionRequest request)
-        {
-            var error = new Action()
+            var @event = new Event()
             {
-                VisitorId = request.VisitorId,
-                SiteId = request.SiteId,
-                Name = request.Name,
-                Time = request.Time,
-                Type = request.Type,
-                Url = request.Url,
-                Data = request.Data,
+                SiteId = request.S,
+                SessionId = request.S,
+                Type = request.T,
+                Url = request.G,
+                Visitor = request.V,
+                Data = new Dictionary<string, object>() {["data"] = request.C, ["x"] = request.X, ["y"] = request.Y, ["width"] = request.W},
             };
 
-            await EventWriter.WriteActionAsync(error);
-
-            return Ok();
-        }
-
-        [HttpPost("UiEvent")]
-        public async Task<IActionResult> PostUiEvent(UiEventRequest request)
-        {
-            var @event = new UiEvent();
-
-            await EventWriter.WriteUiEventAsync(@event);
+            await EventWriter.WriteActionAsync(@event);
 
             return Ok();
         }
