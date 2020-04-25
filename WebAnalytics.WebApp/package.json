@@ -1,0 +1,41 @@
+{
+  "name": "svelte-tailwind-webpack-template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Renerick/svelte-tailwing-webpack-template"
+  },
+  "version": "1.0.0",
+  "description": "A template for Svelte 3 aplication, featuring Webpack, Tailwind CSS, ky, yrv",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --open",
+    "build": "webpack --mode=production",
+    "build:dev": "webpack --mode=development"
+  },
+  "author": "Renerick",
+  "license": "Unlicense",
+  "devDependencies": {
+    "css-loader": "^3.2.0",
+    "postcss-loader": "^3.0.0",
+    "style-loader": "^1.0.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "html-webpack-plugin": "^3.2.0",
+    "svelte-loader": "^2.13.6",
+    "svg-inline-loader": "^0.8.0",
+    "file-loader": "^5.0.2",
+    "webpack-dev-server": "^3.8.1",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9",
+    "autoprefixer": "^9.6.5",
+    "@fullhuman/postcss-purgecss": "^1.3.0",
+    "cssnano": "^4.1.10"
+  },
+  "dependencies": {
+    "svelte": "^3.12.1",
+    "svelte-feather-icons": "^3.2.1",
+    "svelte-select": "^3.3.7",
+    "yrv": "^0.0.18",
+    "tailwindcss": "^1.1.2",
+    "ky": "^0.16.2"
+  }
+}

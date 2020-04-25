@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>WebAnalytics.Db</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.0.30" />
+      <PackageReference Include="Dapper.Contrib" Version="2.0.30" />
+      <PackageReference Include="dbup" Version="4.3.0" />
+      <PackageReference Include="dbup-core" Version="4.3.1" />
+      <PackageReference Include="dbup-postgresql" Version="4.3.0" />
+      <PackageReference Include="Npgsql" Version="4.1.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Postgres\Migrations\001 - Create tables.sql" />
+      <EmbeddedResource Include="Postgres\Migrations\001 - Create tables.sql" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+        <HintPath>c:\program files\dotnet\packs\Microsoft.AspNetCore.App.Ref\3.1.0\ref\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WebAnalytics.Abstraction\WebAnalytics.Abstraction.csproj" />
+      <ProjectReference Include="..\WebAnalytics.Core\WebAnalytics.Core.csproj" />
+    </ItemGroup>
+
+</Project>
