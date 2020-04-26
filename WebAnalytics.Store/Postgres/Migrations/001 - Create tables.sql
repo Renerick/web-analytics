@@ -26,7 +26,7 @@ create table action
 
 create table site
 (
-    site_id uuid not null
+    site_id text not null
         constraint site_pk
             primary key,
     name    text,

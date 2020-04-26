@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Reflection;
+using System.Threading.Tasks;
 using DbUp;
 using WebAnalytics.Abstraction;
 
@@ -17,6 +18,7 @@ namespace WebAnalytics.Store.Postgres
 
         public void EnsureInitialized()
         {
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
             var migrator = DeployChanges.To
                                         .PostgresqlDatabase(_connection.ConnectionString)
                                         .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())

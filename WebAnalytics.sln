@@ -8,8 +8,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAnalytics.Abstraction", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAnalytics.Core", "WebAnalytics.Core\WebAnalytics.Core.csproj", "{7BCFF936-C3F9-4A86-952C-64AAEABAC2B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAnalytics.Api", "WebAnalytics.Api\WebAnalytics.Api.csproj", "{CD198DF6-C356-48E6-A554-43FBB97F6C0F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +30,5 @@ Global
 		{7BCFF936-C3F9-4A86-952C-64AAEABAC2B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BCFF936-C3F9-4A86-952C-64AAEABAC2B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BCFF936-C3F9-4A86-952C-64AAEABAC2B5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD198DF6-C356-48E6-A554-43FBB97F6C0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD198DF6-C356-48E6-A554-43FBB97F6C0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD198DF6-C356-48E6-A554-43FBB97F6C0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD198DF6-C356-48E6-A554-43FBB97F6C0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

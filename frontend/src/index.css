@@ -1,0 +1,16 @@
+@tailwind base;
+
+svg {
+    vertical-align: baseline;
+}
+
+body {
+    @apply bg-gray-100;
+}
+
+.bg-primary {
+    @apply bg-blue-600;
+}
+
+@tailwind components;
+@tailwind utilities;

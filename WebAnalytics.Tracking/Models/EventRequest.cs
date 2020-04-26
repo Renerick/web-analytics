@@ -8,6 +8,11 @@ namespace WebAnalytics.Tracking.Models
         public string S { get; set; }
 
         /// <summary>
+        /// Visitor
+        /// </summary>
+        public string V { get; set; }
+
+        /// <summary>
         /// Group
         /// </summary>
         public string G { get; set; }
@@ -19,11 +24,6 @@ namespace WebAnalytics.Tracking.Models
         /// Windows width
         /// </summary>
         public int W { get; set; }
-
-        /// <summary>
-        /// Visitor
-        /// </summary>
-        public string V { get; set; }
 
         /// <summary>
         /// Browser
