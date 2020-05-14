@@ -33,5 +33,11 @@ namespace WebAnalytics.Tracking.Controllers
         {
             return Ok(await _store.GetSessionsAsync(siteId));
         }
+
+        [HttpGet("/api/v1/site/{siteId}/session/{sessionId}/recording")]
+        public async Task<IActionResult> GetSessionRecording(string siteId,string sessionId)
+        {
+            return Ok(await _store.GetFragmentAsync(siteId, sessionId));
+        }
     }
 }

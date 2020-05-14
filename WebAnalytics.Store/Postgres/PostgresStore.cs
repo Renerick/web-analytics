@@ -75,7 +75,7 @@ namespace WebAnalytics.Store.Postgres
                     session_id = recordingFragment.SessionId,
                     time = recordingFragment.Time,
                     url = recordingFragment.Url,
-                    recording_data = (string) JsonSerializer.Serialize<dynamic>(recordingFragment.Frames,
+                    recording_data = (string) JsonSerializer.Serialize<FrameSet>(recordingFragment.Frames,
                         new JsonSerializerOptions()
                         {
                             PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true
@@ -101,6 +101,24 @@ namespace WebAnalytics.Store.Postgres
         {
             return (await _connection.QueryAsync<Site>(
                 "SELECT site_id as SiteId , site.name, site.url  FROM public.site")).ToArray();
+        }
+
+        public async Task<RecordingFragment[]> GetFragmentAsync(string siteId, string sessionId)
+        {
+            return (await _connection.QueryAsync<dynamic>(
+                    "SELECT session_recording.recording_id as FragmentId , session_recording.session_id as SessionId, session_recording.time, session_recording.url, session_recording.recording_data FROM public.session_recording WHERE session_recording.session_id = @session_id",
+                    new {session_id = sessionId})
+                ).Select(d => new RecordingFragment()
+                {
+                    FragmentId = d.recording_id,
+                    Frames = JsonSerializer.Deserialize<FrameSet>(d.recording_data,
+                        new JsonSerializerOptions()
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true
+                        }),
+                    Url = d.url,
+                    Time = d.time
+                }).ToArray();
         }
     }
 }

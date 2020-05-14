@@ -10,8 +10,7 @@ module.exports = (env, argv) => ({
     resolve: {
         alias: {
             svelte: path.resolve('node_modules', 'svelte'),
-            images: path.resolve('src', 'images'),
-            components: path.resolve('src', 'components')
+            images: path.resolve('src', 'images')
         },
         extensions: ['.mjs', '.js', '.svelte'],
         mainFields: ['svelte', 'browser', 'module', 'main']

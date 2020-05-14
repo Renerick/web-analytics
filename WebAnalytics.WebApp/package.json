@@ -13,7 +13,7 @@
     "build:dev": "webpack --mode=development"
   },
   "author": "Renerick",
-  "license": "Unlicense",
+  "license": "MIT",
   "devDependencies": {
     "css-loader": "^3.2.0",
     "postcss-loader": "^3.0.0",
@@ -28,14 +28,17 @@
     "webpack-cli": "^3.3.9",
     "autoprefixer": "^9.6.5",
     "@fullhuman/postcss-purgecss": "^1.3.0",
-    "cssnano": "^4.1.10"
+    "cssnano": "^4.1.10",
+    "svelte": "^3.21.0"
   },
   "dependencies": {
-    "svelte": "^3.12.1",
-    "svelte-feather-icons": "^3.2.1",
-    "svelte-select": "^3.3.7",
     "yrv": "^0.0.18",
+    "svelte-feather-icons": "^3.2.1",
     "tailwindcss": "^1.1.2",
-    "ky": "^0.16.2"
+    "ky": "^0.16.2",
+    "svelte-grid": "1.10.6",
+    "svelte-select": "3.4.0",
+    "chart.js": "2.9.3",
+    "svelte-table": "^0.1.8"
   }
 }

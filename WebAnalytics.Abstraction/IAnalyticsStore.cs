@@ -8,5 +8,6 @@ namespace WebAnalytics.Abstraction
         Task<Session[]> GetSessionsAsync(string siteId);
         Task<Site> CreateSiteAsync(Site site);
         Task<Site[]> GetSitesAsync();
+        Task<RecordingFragment[]> GetFragmentAsync(string siteId, string sessionId);
     }
 }
