@@ -106,7 +106,7 @@ class Player {
       this._mouseMove(frame.mouseX, frame.mouseY)
     }
     if (frame.clickX !== null && frame.clickY !== null) {
-      this._fireClick(frame.clickX, frame.clickY)
+      this._fireClick(frame.clickX, frame.clickY, frame.target)
     }
     if (frame.contextX !== null && frame.contextY !== null) {
       this._fireContextMenu(frame.contextX, frame.contextY)
@@ -118,12 +118,12 @@ class Player {
     if(this._onPlaying) this._onPlaying();
   }
 
-  _fireClick (x, y) {
+  _fireClick (x, y, target) {
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
     const absX = x - window.pageXOffset
     const absY = y - window.pageYOffset
     // we must get the emene tbehind the recjs-pointer so we do x - 1 and y - 1
-    const element = this.document.elementFromPoint(absX, absY - 1)
+    const element = this.document.querySelector(target) || this.document.elementFromPoint(absX, absY - 1)
     if (element && element.tagName.toLowerCase() === 'input') {
       element.focus()
       this._previousElementFocused = element

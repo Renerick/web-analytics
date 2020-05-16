@@ -23,7 +23,6 @@
         console.log(recording);
         loading = false;
         setTimeout(() => {
-            window.document.domain = "localhost:8082"
             const recjs = new Recjs({
                 fps: 30,
                 document: frame.contentWindow.document
@@ -38,4 +37,4 @@
     style="position:absolute; width: 100%; height: 100vh"
     title="viewport"
     bind:this={frame}
-    src="http://localhost:8082/mcadventure.net/index.html" />
+    src="http://localhost:5000/proxy/http://localhost:8080/mcadventure.net/" />

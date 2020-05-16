@@ -1,4 +1,3 @@
-import Recorder from './Recorder'
 import Player from './Player'
 /*
 available events: 'scroll', 'mousemove','keypress', 'click', 'contextmenu',
@@ -28,7 +27,6 @@ class Recjs {
         this.document = document || window.document
         this.fps = fps || 30
 
-        this.recorder = new Recorder(this.document, this.events, this.fps)
         this.player = new Player(this.document)
     }
 

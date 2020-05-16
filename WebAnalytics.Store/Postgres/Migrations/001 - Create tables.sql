@@ -1,4 +1,4 @@
-create table session
+create table if not exists session
 (
     session_id        text not null
         constraint session_pk
@@ -10,7 +10,7 @@ create table session
     device_info     jsonb
 );
 
-create table action
+create table if not exists action
 (
     action_id  bigserial                not null
         constraint action_pk
@@ -24,7 +24,7 @@ create table action
     data       jsonb
 );
 
-create table site
+create table if not exists site
 (
     site_id text not null
         constraint site_pk

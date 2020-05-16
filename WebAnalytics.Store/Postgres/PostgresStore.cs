@@ -20,7 +20,7 @@ namespace WebAnalytics.Store.Postgres
             "INSERT INTO action(session_id, visitor_id, site_id, time, type,  url, data) VALUES (@session_id, @visitor_id, @site_id, @time, @type, @url, @data::jsonb)";
 
         private const string InsertRecordingFragmentQuery =
-            "INSERT INTO session_recording(session_id, time, url, recording_data) VALUES (@session_id, @time, @url, @recording_data::jsonb)";
+            "INSERT INTO session_recording(session_id, time, url, recording_data) VALUES (@session_id, @time, @url, @recording_data)";
 
         public PostgresStore(IDbConnection connection)
         {

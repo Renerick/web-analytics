@@ -1,12 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using ProxyKit;
 using WebAnalytics.Abstraction;
 using WebAnalytics.Store.Postgres;
 using WebAnalytics.Tracking.Formatters;
@@ -30,6 +35,7 @@ namespace WebAnalytics.Tracking
             services.AddScoped<IEventWriter, PostgresStore>();
             services.AddScoped<IRecordingWriter, PostgresStore>();
             services.AddScoped<IAnalyticsStore, PostgresStore>();
+            services.AddScoped<IInputFormatter, TextPlainInputFormatter>();
 
             services.AddCors(opt =>
             {
@@ -39,6 +45,13 @@ namespace WebAnalytics.Tracking
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .SetIsOriginAllowedToAllowWildcardSubdomains());
+            });
+
+            services.AddProxy();
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "../WebAnalytics.WebApp/dist";
             });
 
             services.AddControllers();
@@ -65,7 +78,36 @@ namespace WebAnalytics.Tracking
 
             app.UseEndpoints(endpoints =>
             {
+                var proxyApp = endpoints.CreateApplicationBuilder();
+
+                proxyApp.RunProxy(context =>
+                {
+                    var url = context.GetRouteValue("site").ToString();
+
+                    context.Request.Path = "";
+                    context.Request.QueryString = QueryString.Empty;
+
+                    var response = context.ForwardTo(url)
+                                  .Send();
+
+                    response.Result.Headers.Add("Access-Control-Allow-Origin", "http://localhost:8081");
+
+                    return response;
+                });
+
+
+                endpoints.Map("/proxy/{*site}", proxyApp.Build());
                 endpoints.MapControllers();
+            });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "../WebAnalytics.WebApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:8081");
+                }
             });
         }
     }

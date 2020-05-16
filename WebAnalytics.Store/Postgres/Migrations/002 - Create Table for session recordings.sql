@@ -8,6 +8,6 @@ create table session_recording
 --             references session,
     time timestamp with time zone not null,
     url text not null,
-    recording_data jsonb not null
+    recording_data text not null
 );
 

@@ -25,16 +25,19 @@ class Recorder {
     this._scrollX = null
     this._scrollY = null
     this._keypress = null
+    this._target = null
     if (events.indexOf('click') !== -1) {
       this.el.addEventListener('click', e => {
-        this._clickX = e.clientX
-        this._clickY = e.clientY
+        this._clickX = e.clientX;
+        this._clickY = e.clientY;
+        this._target = finder(e.target);
       })
     }
     if (events.indexOf('contextmenu') !== -1) {
       this.el.addEventListener('contextmenu', e => {
-        this._contextX = e.clientX
-        this._contextY =e.clientY
+        this._contextX = e.clientX;
+        this._contextY =e.clientY;
+        this._target = finder(e.target);
       })
     }
     if (events.indexOf('mousemove') !== -1) {
@@ -68,7 +71,7 @@ class Recorder {
      * })
      */
   record ({ onRecording }) {
-    this._onRecording = onRecording;    
+    this._onRecording = onRecording;
     this._record()
   }
   /**
@@ -115,6 +118,8 @@ class Recorder {
   }
   _appendFrame () {
     let newFrame = {}
+    newFrame.target = this._target
+    this._target = null
     if (this.events.indexOf('click') !== -1) {
       newFrame.clickX = this._clickX
       newFrame.clickY = this._clickY
