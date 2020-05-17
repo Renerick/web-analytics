@@ -1,35 +1,36 @@
-import Recorder from './Recorder'
-import Player from './Player'
-/*
-available events: 'scroll', 'mousemove','keypress', 'click', 'contextmenu',
-*/
+import Recorder from './Recorder';
+import Cookies from 'js-cookie';
+import {v4 as uuidv4} from 'uuid';
 
 /*
 * Main class
 */
 class Recjs {
-    /**
-     * @example
-     * const recjs = new Recjs({
-     *     events: ['scroll'],
-     *     fps: 60
-     * });
-     * @param {Object} $0
-     * @param  {array} [$0.events=['scroll', 'mousemove', 'keypress', 'click', 'contextmenu']] - User events that will be recorded
-     * @param  {integer} [$0.fps=30] - Number of frames per second
-     * @param  {object} [$0.document=window.document] - Document object to be used. (in case of an iframe)
-     */
-    constructor({events, fps, document}) {
-        const availableEvents = ['scroll', 'mousemove', 'keypress', 'click', 'contextmenu']
-        this.events = events || availableEvents
+
+    constructor({events, fps, document, endpoint, site}) {
+        const availableEvents = ['scroll', 'mousemove', 'keypress', 'click', 'contextmenu'];
+        const userCookieName = "_sau";
+        this.events = events || availableEvents;
         this.events.forEach(event => {
             if (!availableEvents.includes(event)) console.warn(`Unknown event '${event}'`)
-        })
-        this.document = document || window.document
-        this.fps = fps || 30
+        });
+        this.document = document || window.document;
+        this.fps = fps || 30;
 
-        this.recorder = new Recorder(this.document, this.events, this.fps)
-        this.player = new Player(this.document)
+        this.endpoint = endpoint;
+        this.site = site;
+        this.userId = this.getUserCookie(userCookieName);
+
+        this.recorder = new Recorder(this.document, this.events, this.fps);
+    }
+
+    getUserCookie(cookieName) {
+        var result = Cookies.get(cookieName);
+        if (!result) {
+            result = uuidv4();
+            Cookies.set(cookieName, result);
+        }
+        return result;
     }
 
     urlEncode(object, prefix) {
@@ -52,23 +53,11 @@ class Recjs {
         return request;
     }
 
-    send(endpoint, object) {
-        var request = JSON.stringify(object, (key, value) => {
-                if (value !== null) return value
-            });
-        navigator.sendBeacon(endpoint, request);
-        //
-        // fetch(
-        //     endpoint.trimEnd("/") + "/",
-        //     {
-        //         mode: "no-cors",
-        //         method: 'POST',
-        //         body: request,
-        //         headers: {
-        //             'Content-Type': "application/x-www-form-urlencoded;charset=UTF-8"
-        //         }
-        //     }
-        // )
+    send() {
+        let request = JSON.stringify(this.recorder.getData(), (key, value) => {
+            if (value !== null) return value
+        });
+        navigator.sendBeacon(this.endpoint + "/track/rec" + "?v=" + this.userId + "&s=" + this.site + "&g=" + window.location.href, request);
     }
 }
 

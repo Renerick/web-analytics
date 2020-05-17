@@ -5,7 +5,7 @@ create table if not exists session
             primary key,
     site_id         text not null,
     visitor_id      text not null,
-    last_action_id  text not null,
+    last_action_id  text,
     start           timestamp with time zone,
     device_info     jsonb
 );

@@ -71,9 +71,8 @@ namespace WebAnalytics.Tracking.Controllers
             {
                 Site = s,
                 Visitor = v,
-                SessionId = "asdfaf",
                 Time = DateTimeOffset.Now,
-                Url = "alsdkfjlsa",
+                Url = g,
                 Frames = frames
             };
 

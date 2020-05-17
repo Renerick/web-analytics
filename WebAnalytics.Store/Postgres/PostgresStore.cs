@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dapper;
 using WebAnalytics.Abstraction;
 using WebAnalytics.Core.Entities;
+using WebAnalytics.Core.ValueTypes;
 
 namespace WebAnalytics.Store.Postgres
 {
@@ -27,8 +28,9 @@ namespace WebAnalytics.Store.Postgres
             _connection = connection;
         }
 
-        public Task WriteSessionAsync(Session session) =>
-            _connection.ExecuteAsync(InsertSessionQuery,
+        public Task WriteSessionAsync(Session session)
+        {
+            return _connection.ExecuteAsync(InsertSessionQuery,
                 new
                 {
                     session_id = session.SessionId,
@@ -37,6 +39,8 @@ namespace WebAnalytics.Store.Postgres
                     start = session.Start,
                     device_info = JsonSerializer.Serialize(session.DeviceInfo),
                 });
+        }
+
 
         public async Task WriteActionAsync(Event @event)
         {
@@ -62,12 +66,7 @@ namespace WebAnalytics.Store.Postgres
 
         public async Task WriteFragmentAsync(RecordingFragment recordingFragment)
         {
-            var lastEventFromVisitor = await
-                _connection.QueryFirstOrDefaultAsync<string>(
-                    "SELECT session_id FROM action WHERE visitor_id = @visitor_id AND @time - time < interval '00:20:00' ORDER BY time DESC",
-                    new {visitor_id = recordingFragment.Visitor, time = recordingFragment.Time});
-
-            recordingFragment.SessionId = lastEventFromVisitor ?? Guid.NewGuid().ToString();
+            recordingFragment.SessionId = await InitSession(recordingFragment.Visitor, recordingFragment.Site);
 
             await _connection.ExecuteAsync(InsertRecordingFragmentQuery,
                 new
@@ -75,7 +74,7 @@ namespace WebAnalytics.Store.Postgres
                     session_id = recordingFragment.SessionId,
                     time = recordingFragment.Time,
                     url = recordingFragment.Url,
-                    recording_data = (string) JsonSerializer.Serialize<FrameSet>(recordingFragment.Frames,
+                    recording_data = JsonSerializer.Serialize(recordingFragment.Frames,
                         new JsonSerializerOptions()
                         {
                             PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true
@@ -119,6 +118,28 @@ namespace WebAnalytics.Store.Postgres
                     Url = d.url,
                     Time = d.time
                 }).ToArray();
+        }
+
+        private async Task<string> InitSession(string visitorId, string siteId)
+        {
+            var sessionId = await
+                _connection.QueryFirstOrDefaultAsync<string>(
+                    "SELECT session_id FROM session WHERE visitor_id = @visitor_id AND @time - start < interval '00:20:00' ORDER BY start DESC",
+                    new {visitor_id = visitorId, time = DateTimeOffset.Now});
+            if (sessionId != null) return sessionId;
+
+            sessionId = Guid.NewGuid().ToString();
+
+            await _connection.ExecuteAsync(InsertSessionQuery, new
+            {
+                session_id = sessionId,
+                visitor_id = visitorId,
+                site_id = siteId,
+                start = DateTimeOffset.Now,
+                device_info = JsonSerializer.Serialize(new DeviceInfo()),
+            });
+
+            return sessionId;
         }
     }
 }
