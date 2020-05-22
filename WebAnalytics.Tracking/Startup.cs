@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.AspNetCore.Builder;
@@ -13,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using ProxyKit;
 using WebAnalytics.Abstraction;
+using WebAnalytics.HeatMaps;
 using WebAnalytics.Store.Postgres;
 using WebAnalytics.Tracking.Formatters;
 
@@ -36,6 +36,8 @@ namespace WebAnalytics.Tracking
             services.AddScoped<IRecordingWriter, PostgresStore>();
             services.AddScoped<IAnalyticsStore, PostgresStore>();
             services.AddScoped<IInputFormatter, TextPlainInputFormatter>();
+
+            services.AddSingleton<IHeatmapDrawer, HeatmapDrawer>();
 
             services.AddCors(opt =>
             {

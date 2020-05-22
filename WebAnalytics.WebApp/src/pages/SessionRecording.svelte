@@ -25,10 +25,10 @@
         setTimeout(() => {
             const recjs = new Recjs({
                 fps: 30,
-                document: frame.contentWindow.document
+                frame: frame
             });
 
-            recjs.player.play(recording[0].frames, {});
+            recjs.player.play(recording, {});
         }, 1000);
     });
 </script>
@@ -36,5 +36,4 @@
 <iframe
     style="position:absolute; width: 100%; height: 100vh"
     title="viewport"
-    bind:this={frame}
-    src="http://localhost:5000/proxy/http://localhost:8080/mcadventure.net/" />
+    bind:this={frame}></iframe>
