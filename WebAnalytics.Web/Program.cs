@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace WebAnalytics.Tracking
+namespace WebAnalytics.Web
 {
     public class Program
     {

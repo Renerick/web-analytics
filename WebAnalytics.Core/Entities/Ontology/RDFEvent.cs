@@ -53,6 +53,12 @@ namespace WebAnalytics.Core.Entities.Ontology
 
     }
 
+    [XmlType(TypeName = "MoveMouseEvent")]
+    public class MoveMouseEvent: RdfEvent
+    {
+
+    }
+
     [XmlType(TypeName = "CommandEvent")]
     public class RdfCommandEvent : RdfEvent
     {

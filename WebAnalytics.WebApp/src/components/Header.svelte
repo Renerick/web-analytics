@@ -23,7 +23,7 @@
     }
 </style>
 
-<div class="w-full self-center">
+<div class="w-full self-center px-4">
     <div class="flex justify-between items-stretch my-4">
         <div>
             <img src={semlytics} alt="Semlytics logo" />

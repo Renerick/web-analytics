@@ -120,6 +120,36 @@ namespace WebAnalytics.Store.Postgres
                 }).ToArray();
         }
 
+        public async Task<Page[]> GetPagesAsync(string siteId)
+        {
+            return (await _connection.QueryAsync<dynamic>(
+                    "SELECT count(session_recording.session_id) as visits, session_recording.url FROM public.session_recording JOIN public.session ON public.session_recording.session_id = public.session.session_id WHERE public.session.site_id = @site_id GROUP BY session_recording.url ",
+                    new {site_id = siteId})
+                ).Select(d => new Page()
+                {
+                    Url = d.url,
+                    Visits = d.visits
+                }).ToArray();
+        }
+
+        public async Task<RecordingFragment[]> GetPageViews(string siteId, string pageUri)
+        {
+            return (await _connection.QueryAsync<dynamic>(
+                    "SELECT session_recording.recording_id as FragmentId , session_recording.session_id as SessionId, session_recording.time, session_recording.url, session_recording.recording_data FROM public.session_recording WHERE public.session_recording.url = @url",
+                    new {url = pageUri})
+                ).Select(d => new RecordingFragment()
+                {
+                    FragmentId = d.recording_id,
+                    Frames = JsonSerializer.Deserialize<FrameSet>(d.recording_data,
+                        new JsonSerializerOptions()
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true
+                        }),
+                    Url = d.url,
+                    Time = d.time
+                }).ToArray();
+        }
+
         private async Task<string> InitSession(string visitorId, string siteId)
         {
             var sessionId = await

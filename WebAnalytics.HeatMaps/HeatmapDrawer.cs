@@ -8,7 +8,7 @@ namespace WebAnalytics.HeatMaps
 {
     public interface IHeatmapDrawer
     {
-        void CreateHeatmap(IEnumerable<RdfSession> sessions);
+        byte[] CreateHeatmap(IEnumerable<RdfSession> sessions);
     }
 
     public class HeatmapDrawer : IHeatmapDrawer
@@ -20,7 +20,7 @@ namespace WebAnalytics.HeatMaps
             _gradientProvider = new GradientProvider();
         }
 
-        public void CreateHeatmap(IEnumerable<RdfSession> sessions)
+        public byte[] CreateHeatmap(IEnumerable<RdfSession> sessions)
         {
             const int displayRadius = 40;
             const int groupRadius = 10;
@@ -36,10 +36,9 @@ namespace WebAnalytics.HeatMaps
                     .Count(p => Math.Abs(point.InRegionX - p.InRegionX) <= groupRadius &&
                         Math.Abs(point.InRegionY - p.InRegionY) <= groupRadius));
 
-            int width = (int) 100;
-            int height = (int) 100;
+            int width = 2000;
+            int height = 2000;
             using var img = new MagickImage(MagickColors.Transparent, width, height);
-            uint[] pixels = new uint[width * height];
             var drawables = new Drawables();
             for (int y = 0; y < height; y++)
             {
@@ -54,18 +53,13 @@ namespace WebAnalytics.HeatMaps
 
                     intensity = Math.Abs(intensity) < 0.01 ? 0 : intensity / maxNearestCount;
 
-                    byte color =
-                        intensity == 0 ? (byte) 240 :
-                        intensity >= 1 ? (byte) 0 :
-                        Convert.ToByte((1 - intensity) * 240);
-
                     // var pixelColorHsl = new ColorHSL(intensity * 240 / 255, .7, .5);
                     drawables.FillColor(_gradientProvider.GetColorAtValue(intensity)).Point(x, y);
                 }
             }
 
             drawables.Draw(img);
-            img.Write("/home/renerick/test/images/test1.png");
+            return img.ToByteArray(MagickFormat.Png);
         }
     }
 }

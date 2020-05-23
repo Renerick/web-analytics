@@ -9,5 +9,7 @@ namespace WebAnalytics.Abstraction
         Task<Site> CreateSiteAsync(Site site);
         Task<Site[]> GetSitesAsync();
         Task<RecordingFragment[]> GetFragmentAsync(string siteId, string sessionId);
+        Task<Page[]> GetPagesAsync(string siteId);
+        Task<RecordingFragment[]> GetPageViews(string siteId, string pageUri);
     }
 }

@@ -1,6 +1,6 @@
 <script>
-    import { Router, Route, Link, router } from "yrv";
-    import { ActivityIcon, MapIcon, SettingsIcon, LayoutIcon } from "svelte-feather-icons";
+    import {Router, Route, Link, router} from "yrv";
+    import {ActivityIcon, MapIcon, SettingsIcon, LayoutIcon, FileTextIcon} from "svelte-feather-icons";
     import {onMount} from 'svelte';
 
     $: siteId = $router.params.siteId;
@@ -18,9 +18,9 @@
             icon: ActivityIcon
         },
         {
-            label: "Heatmaps",
-            url: baseUrl + "/heatmaps",
-            icon: MapIcon
+            label: "Pages",
+            url: baseUrl + "/pages",
+            icon: FileTextIcon
         },
         {
             label: "Site setting",
@@ -33,17 +33,16 @@
 <nav>
     <ul>
         {#each items as item}
-            <li
-                class={'my-1 rounded ' + (item.url.replace(":siteId", siteId) === $router.path ? 'bg-primary text-white' : 'hover:bg-gray-300')}>
-                <Link
-                    href={item.url.replace(":siteId", siteId)}
-                    class={'px-4 py-3 text-lg w-full h-full flex align-center'}>
+            <li class={'relative my-1 rounded-r-lg hover:bg-gray-300 ' + ( $router.path.startsWith(item.url.replace(":siteId", siteId)) ? 'text-primary bg-gray-200' : '')}>
+                <Link href={item.url.replace(":siteId", siteId)}
+                      class={'px-4 py-3 w-full h-full flex align-center focus:outline-none'}>
                     <span>
-                        <svelte:component this={item.icon} size="24" />
+                        <svelte:component this={item.icon} size="24"/>
                     </span>
-                    <span class={'ml-2'}>{item.label}</span>
+                    <span class={'ml-4'}>{item.label}</span>
                 </Link>
             </li>
         {/each}
     </ul>
+
 </nav>

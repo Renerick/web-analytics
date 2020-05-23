@@ -3,7 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Formatters;
 
-namespace WebAnalytics.Tracking.Formatters
+namespace WebAnalytics.Web.Formatters
 {
     public class TextPlainInputFormatter : TextInputFormatter
     {

@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebAnalytics.Abstraction;
 using WebAnalytics.Core.Entities;
-using WebAnalytics.Tracking.Models;
+using WebAnalytics.Web.Models;
 
-namespace WebAnalytics.Tracking.Controllers
+namespace WebAnalytics.Web.Controllers
 {
     [Route("track")]
     public class TrackingController : ControllerBase

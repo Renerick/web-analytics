@@ -12,11 +12,12 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using ProxyKit;
 using WebAnalytics.Abstraction;
+using WebAnalytics.Core.Entities.Ontology;
 using WebAnalytics.HeatMaps;
 using WebAnalytics.Store.Postgres;
-using WebAnalytics.Tracking.Formatters;
+using WebAnalytics.Web.Formatters;
 
-namespace WebAnalytics.Tracking
+namespace WebAnalytics.Web
 {
     public class Startup
     {
@@ -32,10 +33,14 @@ namespace WebAnalytics.Tracking
             services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(Configuration.GetConnectionString("master")));
 
             services.AddScoped<IInitializer, PostgresInitializer>();
+
             services.AddScoped<IEventWriter, PostgresStore>();
             services.AddScoped<IRecordingWriter, PostgresStore>();
             services.AddScoped<IAnalyticsStore, PostgresStore>();
+
             services.AddScoped<IInputFormatter, TextPlainInputFormatter>();
+
+            services.AddScoped<IRdfMapper, RdfMapper>();
 
             services.AddSingleton<IHeatmapDrawer, HeatmapDrawer>();
 

@@ -1,4 +1,4 @@
-namespace WebAnalytics.Tracking.Models
+namespace WebAnalytics.Web.Models
 {
     public class RecordingFragmentRequest
     {

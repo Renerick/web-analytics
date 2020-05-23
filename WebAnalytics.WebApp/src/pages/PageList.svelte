@@ -16,7 +16,7 @@
                 .get(
                         "http://localhost:5000/api/v1/site/" +
                         $router.params.siteId +
-                        "/sessions"
+                        "/pages"
                 )
                 .json();
         loading = false;
@@ -33,23 +33,16 @@
         },
         {
             key: "dateTime",
-            title: "Начало",
+            title: "Страница",
             value: v => v.start,
             sortable: true,
             headerClass: "px-4 py-2"
         },
         {
-            key: "duration",
-            title: "Длительность",
-            value: v => v.duration,
-            sortable: true,
-            headerClass: "px-4 py-2"
-        },
-        {
-            key: "activity",
-            title: "Активность",
-            value: v => v.activityLevel,
-            renderValue: v => v.activityLevel, // capitalize
+            key: "sessionCount",
+            title: "Количество сессий",
+            value: v => v.sessionCount,
+            renderValue: v => v.sessionCount,
             sortable: true,
             headerClass: "px-4 py-2"
         }
@@ -71,15 +64,14 @@
             <td class="px-4 py-3">
                 <div class="flex">
                     <Link
-                            href={`/site/${$router.params.siteId}/sessions/${row.sessionId}/recording`}
+                            href={`/site/${$router.params.siteId}/pages/heatmap/${encodeURIComponent(row.url)}`}
                             class={'flex justify-center p-3 rounded-full hover:bg-gray-300 text-center w-12'}>
-                        <PlayIcon/>
+                        <MapIcon/>
                     </Link>
                 </div>
             </td>
-            <td class="px-4 py-3">{row.start}</td>
-            <td class="px-4 py-3">{row.duration}</td>
-            <td class="px-4 py-3">{row.activityLevel}</td>
+            <td class="px-4 py-3">{row.url}</td>
+            <td class="px-4 py-3 text-center w-10">{row.visits}</td>
         </tr>
     </SvelteTable>
 {/if}

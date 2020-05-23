@@ -8,6 +8,6 @@ namespace WebAnalytics.Core.Entities.Ontology
     public class BaseRdfCollection
     {
         [XmlAttribute("parseType", Namespace = RdfRoot.RdfNamespace)]
-        public string RdfParseType { get; set; } = "Collection";
+        public string RdfParseType { get; } = "Collection";
     }
 }
