@@ -4,23 +4,22 @@
     import {Link, router} from "yrv";
     import ky from "ky";
     import {PlayIcon, MapIcon} from "svelte-feather-icons";
+    import LoaderFrame from "../components/LoaderFrame.svelte";
 
     let iconAsc = "↑";
     let iconDesc = "↓";
-    let sessions = [];
+    let pages = [];
     let loading = true;
 
-    $: (async () => {
-        loading = true;
-        sessions = await ky
+    async function fetchData(siteId) {
+        pages = await ky
                 .get(
                         "http://localhost:5000/api/v1/site/" +
                         $router.params.siteId +
                         "/pages"
                 )
                 .json();
-        loading = false;
-    })();
+    }
 
     // define column configs
     const columns = [
@@ -49,37 +48,37 @@
     ];
 </script>
 
+<LoaderFrame func={async () => await fetchData($router.params.siteId)}>
+    <div class="flex flex-col">
+        <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+            <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
+                {#if pages.length === 0}
+                    <div class="w-full text-center text-gray-600">Ни одной сессии пока не было записано</div>
+                {:else }
 
-<div class="flex flex-col">
-    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
-            {#if !loading && sessions.length === 0}
-                <div class="w-full text-center text-gray-600">Ни одной сессии пока не было записано</div>
-            {:else if !loading}
+                    <SvelteTable
+                            classNameTable="min-w-full"
+                            {columns}
+                            rows={pages}>
 
-                <SvelteTable
-                        classNameTable="min-w-full"
-                        {columns}
-                        rows={sessions}>
-
-                    <tr class="bg-white hover:bg-gray-100 cursor-pointer"
-                        slot="row"
-                        let:row
-                        let:n>
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            <div class="flex">
-                                <Link href={`/site/${$router.params.siteId}/pages/${encodeURIComponent(row.url)}/heatmap`}
-                                      class={'flex justify-center p-3 rounded-full hover:bg-gray-300 text-center w-10'}>
-                                    <MapIcon/>
-                                </Link>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">{row.url}</td>
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">{row.visits}</td>
-                    </tr>
-                </SvelteTable>
-            {/if}
+                        <tr class="bg-white hover:bg-gray-100 cursor-pointer"
+                            slot="row"
+                            let:row
+                            let:n>
+                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <div class="flex">
+                                    <Link href={`/site/${$router.params.siteId}/pages/${encodeURIComponent(row.url)}/heatmap`}
+                                          class={'flex justify-center p-3 rounded-full hover:bg-gray-300 text-center w-10'}>
+                                        <MapIcon/>
+                                    </Link>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">{row.url}</td>
+                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">{row.visits}</td>
+                        </tr>
+                    </SvelteTable>
+                {/if}
+            </div>
         </div>
     </div>
-</div>
-
+</LoaderFrame>

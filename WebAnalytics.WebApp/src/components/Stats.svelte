@@ -1,7 +1,7 @@
 <h3 class="text-lg leading-6 font-medium text-gray-900">
     Last 30 days
 </h3>
-<div class="mt-5 grid grid-cols-1 rounded-t-lg bg-white overflow-hidden shadow md:grid-cols-3">
+<div class="mt-5 grid grid-cols-1 rounded-lg bg-white overflow-hidden shadow md:grid-cols-3">
     <div>
         <div class="px-4 py-5 sm:p-6">
             <dl>
