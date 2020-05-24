@@ -29,6 +29,7 @@
     <ItemGroup>
       <ProjectReference Include="..\WebAnalytics.Abstraction\WebAnalytics.Abstraction.csproj" />
       <ProjectReference Include="..\WebAnalytics.Core\WebAnalytics.Core.csproj" />
+      <ProjectReference Include="..\WebAnalytics.HeatMaps\WebAnalytics.HeatMaps.csproj" />
     </ItemGroup>
 
 </Project>

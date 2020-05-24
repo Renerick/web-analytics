@@ -5,11 +5,10 @@ import {v4 as uuidv4} from 'uuid';
 /*
 * Main class
 */
-class Recjs {
+class Tracker {
 
     constructor({events, fps, document, endpoint, site}) {
         const availableEvents = ['scroll', 'mousemove', 'keypress', 'click', 'contextmenu'];
-        const userCookieName = "_sau";
         this.events = events || availableEvents;
         this.events.forEach(event => {
             if (!availableEvents.includes(event)) console.warn(`Unknown event '${event}'`)
@@ -19,16 +18,18 @@ class Recjs {
 
         this.endpoint = endpoint;
         this.site = site;
-        this.userId = this.getUserCookie(userCookieName);
-
         this.recorder = new Recorder(this.document, this.events, this.fps);
+
+        this._init();
     }
 
-    getUserCookie(cookieName) {
-        var result = Cookies.get(cookieName);
-        if (!result) {
+    getUserCookie(createIfNotExists) {
+        const userCookieName = "_sau";
+
+        var result = Cookies.get(userCookieName);
+        if (!result && createIfNotExists) {
             result = uuidv4();
-            Cookies.set(cookieName, result);
+            Cookies.set(userCookieName, result);
         }
         return result;
     }
@@ -36,11 +37,11 @@ class Recjs {
     urlEncode(object, prefix) {
         let request = [];
 
-        for (var prop in object) {
+        for (let prop in object) {
             if (!object.hasOwnProperty(prop)) continue;
 
-            var key = prefix ? prefix + "[" + encodeURIComponent(prop) + "]" : encodeURIComponent(prop);
-            var value;
+            const key = prefix ? prefix + "[" + encodeURIComponent(prop) + "]" : encodeURIComponent(prop);
+            let value;
             if (typeof object[prop] === "object")
                 request.push(this.urlEncode(object[prop], key));
             else {
@@ -53,12 +54,48 @@ class Recjs {
         return request;
     }
 
-    send() {
+    sendRecording() {
+        const userId = this.getUserCookie(false);
+
+        if (!userId) return;
+
         let request = JSON.stringify(this.recorder.getData(), (key, value) => {
             if (value !== null) return value
         });
-        navigator.sendBeacon(this.endpoint + "/track/rec" + "?v=" + this.userId + "&s=" + this.site + "&g=" + window.location.href, request);
+        let params = {
+            v: userId,
+            s: this.site,
+            g: window.location.href
+        }
+        navigator.sendBeacon(this.endpoint + "/track/rec?" + this.urlEncode(params), request);
+    }
+
+    ping() {
+        let data = {
+            t: 'view',
+            s: this.site,
+            v: this.getUserCookie(),
+            g: window.location.href,
+
+            u: navigator.userAgent
+        }
+        navigator.sendBeacon(this.endpoint + "/track/event?" + this.urlEncode(data), "");
+    }
+
+    _init() {
+        this.getUserCookie(true);
+
+        if (!this.getUserCookie()) return;
+
+        window.addEventListener("beforeunload", () => {
+            this.recorder.stop();
+            this.sendRecording()
+        });
+
+        this.ping()
+
+        this.recorder.record({});
     }
 }
 
-export default Recjs
+export default Tracker

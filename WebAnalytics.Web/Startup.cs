@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
+using Community.Microsoft.Extensions.Caching.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,7 @@ using WebAnalytics.Core.Entities.Ontology;
 using WebAnalytics.HeatMaps;
 using WebAnalytics.Store.Postgres;
 using WebAnalytics.Web.Formatters;
+using WebAnalytics.Web.Services;
 
 namespace WebAnalytics.Web
 {
@@ -39,10 +41,19 @@ namespace WebAnalytics.Web
             services.AddScoped<IAnalyticsStore, PostgresStore>();
 
             services.AddScoped<IInputFormatter, TextPlainInputFormatter>();
+            services.AddScoped<IDeviceService, DeviceService>();
 
             services.AddScoped<IRdfMapper, RdfMapper>();
 
             services.AddSingleton<IHeatmapDrawer, HeatmapDrawer>();
+
+            services.AddDistributedPostgreSqlCache(setup =>
+            {
+                setup.ConnectionString = Configuration.GetConnectionString("master");
+                setup.SchemaName = "public";
+                setup.TableName = "cache";
+                setup.CreateInfrastructure = true;
+            });
 
             services.AddCors(opt =>
             {
@@ -61,7 +72,10 @@ namespace WebAnalytics.Web
                 configuration.RootPath = "../WebAnalytics.WebApp/dist";
             });
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger, IEnumerable<IInitializer> initializers)

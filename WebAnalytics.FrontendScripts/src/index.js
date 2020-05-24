@@ -1,5 +1,5 @@
-import Recjs from './Recjs.js'
+import Tracker from './Tracker.js'
 
-window.Recjs = Recjs
+window.Tracker = Tracker
 
-export default Recjs
+export default Tracker

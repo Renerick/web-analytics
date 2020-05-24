@@ -18,7 +18,7 @@
         selectedValue = sites[0];
 
         if (sites.length > 0)
-            navigateTo("/site/" + selectedValue.value + "/dashboard", {
+            navigateTo("/site/" + selectedValue.value + "/sessions", {
                 replace: true
             });
     });

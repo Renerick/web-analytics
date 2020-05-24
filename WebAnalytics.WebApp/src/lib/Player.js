@@ -41,8 +41,6 @@ class Player {
      */
     stop() {
         this.pause()
-        this._dataFrameIndex = 0
-        this._renderFrame() // render once more with the initial frame
     }
 
     /**
@@ -104,22 +102,19 @@ class Player {
             this._dataFrameIndex = 0;
             return;
         }
-
-        if (this._dataFrameIndex === 0) { // initialize
-            if (this.frame.src !== "http://localhost:5000/proxy/" + currentFragment.url) {
-                let loaded = function (e) {
-                    this.el = this.frame.contentWindow.document.scrollingElement;
-                    this.document = this.frame.contentWindow.document;
-                    this.loading = false;
-                    this.frame.removeEventListener("load", loaded);
-                }
-                this.frame.src = "http://localhost:5000/proxy/" + currentFragment.url;
-                this.loading = true;
-                this.frame.addEventListener("load", loaded.bind(this));
-                return;
+        if (this.frame.src !== "http://localhost:5000/proxy/" + currentFragment.url) {
+            let loaded = function (e) {
+                this.el = this.frame.contentWindow.document.scrollingElement;
+                this.document = this.frame.contentWindow.document;
+                this.loading = false;
+                this.frame.removeEventListener("load", loaded);
             }
-
-
+            this.frame.src = "http://localhost:5000/proxy/" + currentFragment.url;
+            this.loading = true;
+            this.frame.addEventListener("load", loaded.bind(this));
+            return;
+        }
+        if (this._dataFrameIndex === 0) { // initialize
             this.el.scrollTop = 0;
             this.el.scrollLeft = 0;
             const pointer = this.document.getElementById('recjs-pointer');

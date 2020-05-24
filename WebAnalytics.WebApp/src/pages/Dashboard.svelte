@@ -254,7 +254,6 @@
         width: 100%;
     }
 </style>
-
 <Grid bind:items cols={4} gap={8} let:item rowHeight={192}>
     <div class="content rounded bg-white shadow-md p-1 relative flex flex-col ">
         <h2 class="text-lg font-bold mt-3 mx-3 z-50 bg-white">

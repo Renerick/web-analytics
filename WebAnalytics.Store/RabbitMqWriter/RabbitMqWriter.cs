@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using WebAnalytics.Abstraction;
 using WebAnalytics.Core.Entities;
+using WebAnalytics.Core.ValueTypes;
 
 namespace WebAnalytics.Store.RabbitMqWriter
 {
@@ -12,6 +13,6 @@ namespace WebAnalytics.Store.RabbitMqWriter
 
         public void WriteAction(Event @event) => throw new System.NotImplementedException();
 
-        public Task WriteActionAsync(Event @event) => throw new System.NotImplementedException();
+        public Task WriteActionAsync(Event @event, DeviceInfo deviceInfo) => throw new System.NotImplementedException();
     }
 }

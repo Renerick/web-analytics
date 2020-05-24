@@ -17,18 +17,10 @@ namespace WebAnalytics.Web.Models
         /// </summary>
         public string G { get; set; }
 
-        public int X { get; set; }
-        public int Y { get; set; }
-
         /// <summary>
-        /// Windows width
+        /// User agent
         /// </summary>
-        public int W { get; set; }
-
-        /// <summary>
-        /// Browser
-        /// </summary>
-        public string B { get; set; }
+        public string U { get; set; }
 
         /// <summary>
         /// Event type

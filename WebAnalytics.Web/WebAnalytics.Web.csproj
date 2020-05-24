@@ -12,7 +12,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Community.Microsoft.Extensions.Caching.PostgreSql" Version="1.0.30" />
+      <PackageReference Include="DeviceDetector.NET" Version="4.1.0" />
       <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.4" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.4" />
       <PackageReference Include="Npgsql" Version="4.1.2" />
       <PackageReference Include="ProxyKit" Version="2.3.3" />
     </ItemGroup>

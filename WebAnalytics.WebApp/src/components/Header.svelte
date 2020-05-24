@@ -3,7 +3,6 @@
     import { onMount } from "svelte";
     import { Router, Route, Link, router, navigateTo } from "yrv";
     import semlytics from "images/semlytics-logo-color-small.svg";
-    import ky from "ky";
 
     let sites = [];
     let selectedValue = null;

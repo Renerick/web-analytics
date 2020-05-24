@@ -1,12 +1,11 @@
 using System.Threading.Tasks;
 using WebAnalytics.Core.Entities;
+using WebAnalytics.Core.ValueTypes;
 
 namespace WebAnalytics.Abstraction
 {
     public interface IEventWriter
     {
-        Task WriteSessionAsync(Session session);
-
-        Task WriteActionAsync(Event @event);
+        Task WriteActionAsync(Event @event, DeviceInfo deviceInfo);
     }
 }

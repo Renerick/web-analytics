@@ -2,8 +2,11 @@ using System;
 using System.Data;
 using System.Reflection;
 using System.Threading.Tasks;
+using Dapper;
 using DbUp;
 using WebAnalytics.Abstraction;
+using WebAnalytics.Core.Entities;
+using WebAnalytics.Core.ValueTypes;
 
 namespace WebAnalytics.Store.Postgres
 {
@@ -19,6 +22,8 @@ namespace WebAnalytics.Store.Postgres
         public void EnsureInitialized()
         {
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+            SqlMapper.AddTypeHandler(typeof(DeviceInfo), new JsonTypeHandler());
+            SqlMapper.AddTypeHandler(typeof(FrameSet), new JsonTypeHandler());
             var migrator = DeployChanges.To
                                         .PostgresqlDatabase(_connection.ConnectionString)
                                         .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())

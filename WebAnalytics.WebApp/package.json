@@ -34,7 +34,8 @@
   "dependencies": {
     "yrv": "^0.0.18",
     "svelte-feather-icons": "^3.2.1",
-    "tailwindcss": "^1.1.2",
+    "tailwindcss": "^1.4.6",
+    "@tailwindcss/ui": "^0.3.0",
     "ky": "^0.16.2",
     "svelte-grid": "1.10.6",
     "svelte-select": "3.4.0",

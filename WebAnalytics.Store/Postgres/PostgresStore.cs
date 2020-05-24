@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.Json;
@@ -28,28 +29,9 @@ namespace WebAnalytics.Store.Postgres
             _connection = connection;
         }
 
-        public Task WriteSessionAsync(Session session)
+        public async Task WriteActionAsync(Event @event, DeviceInfo deviceInfo)
         {
-            return _connection.ExecuteAsync(InsertSessionQuery,
-                new
-                {
-                    session_id = session.SessionId,
-                    visitor_id = session.VisitorId,
-                    site_id = session.SiteId,
-                    start = session.Start,
-                    device_info = JsonSerializer.Serialize(session.DeviceInfo),
-                });
-        }
-
-
-        public async Task WriteActionAsync(Event @event)
-        {
-            var lastEventFromVisitor = await
-                _connection.QueryFirstOrDefaultAsync<string>(
-                    "SELECT session_id FROM action WHERE visitor_id = @visitor_id AND @time - time < interval '00:20:00' ORDER BY time DESC",
-                    new {visitor_id = @event.Visitor, time = @event.Time});
-
-            @event.SessionId = lastEventFromVisitor ?? Guid.NewGuid().ToString();
+            @event.SessionId = await InitSession(@event.Visitor, @event.SiteId, deviceInfo);
 
             await _connection.ExecuteAsync(InsertActionQuery,
                 new
@@ -66,7 +48,7 @@ namespace WebAnalytics.Store.Postgres
 
         public async Task WriteFragmentAsync(RecordingFragment recordingFragment)
         {
-            recordingFragment.SessionId = await InitSession(recordingFragment.Visitor, recordingFragment.Site);
+            recordingFragment.SessionId = await InitSession(recordingFragment.Visitor, recordingFragment.Site, null);
 
             await _connection.ExecuteAsync(InsertRecordingFragmentQuery,
                 new
@@ -74,19 +56,28 @@ namespace WebAnalytics.Store.Postgres
                     session_id = recordingFragment.SessionId,
                     time = recordingFragment.Time,
                     url = recordingFragment.Url,
-                    recording_data = JsonSerializer.Serialize(recordingFragment.Frames,
-                        new JsonSerializerOptions()
-                        {
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true
-                        })
+                    recording_data = recordingFragment.Frames
                 });
         }
 
         public async Task<Session[]> GetSessionsAsync(string siteId)
         {
-            return (await _connection.QueryAsync<Session>(
-                "SELECT session.session_id, session.site_id, session.visitor_id, session.start  FROM session WHERE session.site_id = @site_id",
-                new {site_id = siteId})).ToArray();
+            var lookup = new Dictionary<string, Session>();
+            var result = new List<Session>();
+            await _connection.QueryAsync<Session, RecordingFragment, Session>(
+                "SELECT * FROM (SELECT session.session_id, session.site_id, session.visitor_id, session.start, session.device_info, session_recording.recording_id as FragmentId , session_recording.session_id as SessionId, session_recording.time, session_recording.url, session_recording.recording_data as Frames FROM public.session JOIN session_recording  ON public.session_recording.session_id = public.session.session_id  WHERE session.site_id = @site_id) AS session_info ORDER BY session_info.time",
+                (s, a) =>
+                {
+                    if (!lookup.TryGetValue(s.SessionId, out var session))
+                    {
+                        lookup.Add(s.SessionId, session = s);
+                        result.Add(session);
+                    }
+
+                    session.RecordingFragments.Add(a);
+                    return s;
+                }, new {site_id = siteId}, splitOn: "FragmentId");
+            return result.ToArray();
         }
 
         public async Task<Site> CreateSiteAsync(Site site)
@@ -104,53 +95,29 @@ namespace WebAnalytics.Store.Postgres
 
         public async Task<RecordingFragment[]> GetFragmentAsync(string siteId, string sessionId)
         {
-            return (await _connection.QueryAsync<dynamic>(
-                    "SELECT session_recording.recording_id as FragmentId , session_recording.session_id as SessionId, session_recording.time, session_recording.url, session_recording.recording_data FROM public.session_recording WHERE session_recording.session_id = @session_id",
+            return (await _connection.QueryAsync<RecordingFragment>(
+                    "SELECT session_recording.recording_id as FragmentId , session_recording.session_id as SessionId, session_recording.time, session_recording.url, session_recording.recording_data as Frames FROM public.session_recording WHERE session_recording.session_id = @session_id",
                     new {session_id = sessionId})
-                ).Select(d => new RecordingFragment()
-                {
-                    FragmentId = d.recording_id,
-                    Frames = JsonSerializer.Deserialize<FrameSet>(d.recording_data,
-                        new JsonSerializerOptions()
-                        {
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true
-                        }),
-                    Url = d.url,
-                    Time = d.time
-                }).ToArray();
+                ).ToArray();
         }
 
         public async Task<Page[]> GetPagesAsync(string siteId)
         {
-            return (await _connection.QueryAsync<dynamic>(
+            return (await _connection.QueryAsync<Page>(
                     "SELECT count(session_recording.session_id) as visits, session_recording.url FROM public.session_recording JOIN public.session ON public.session_recording.session_id = public.session.session_id WHERE public.session.site_id = @site_id GROUP BY session_recording.url ",
                     new {site_id = siteId})
-                ).Select(d => new Page()
-                {
-                    Url = d.url,
-                    Visits = d.visits
-                }).ToArray();
+                ).ToArray();
         }
 
         public async Task<RecordingFragment[]> GetPageViews(string siteId, string pageUri)
         {
-            return (await _connection.QueryAsync<dynamic>(
-                    "SELECT session_recording.recording_id as FragmentId , session_recording.session_id as SessionId, session_recording.time, session_recording.url, session_recording.recording_data FROM public.session_recording WHERE public.session_recording.url = @url",
+            return (await _connection.QueryAsync<RecordingFragment>(
+                    "SELECT session_recording.recording_id as FragmentId , session_recording.session_id as SessionId, session_recording.time, session_recording.url, session_recording.recording_data as Frames FROM public.session_recording WHERE public.session_recording.url = @url",
                     new {url = pageUri})
-                ).Select(d => new RecordingFragment()
-                {
-                    FragmentId = d.recording_id,
-                    Frames = JsonSerializer.Deserialize<FrameSet>(d.recording_data,
-                        new JsonSerializerOptions()
-                        {
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true
-                        }),
-                    Url = d.url,
-                    Time = d.time
-                }).ToArray();
+                ).ToArray();
         }
 
-        private async Task<string> InitSession(string visitorId, string siteId)
+        private async Task<string> InitSession(string visitorId, string siteId, DeviceInfo deviceInfo)
         {
             var sessionId = await
                 _connection.QueryFirstOrDefaultAsync<string>(
@@ -160,14 +127,15 @@ namespace WebAnalytics.Store.Postgres
 
             sessionId = Guid.NewGuid().ToString();
 
-            await _connection.ExecuteAsync(InsertSessionQuery, new
-            {
-                session_id = sessionId,
-                visitor_id = visitorId,
-                site_id = siteId,
-                start = DateTimeOffset.Now,
-                device_info = JsonSerializer.Serialize(new DeviceInfo()),
-            });
+            await _connection.ExecuteAsync(InsertSessionQuery,
+                new
+                {
+                    session_id = sessionId,
+                    visitor_id = visitorId,
+                    site_id = siteId,
+                    start = DateTimeOffset.Now,
+                    device_info = deviceInfo
+                });
 
             return sessionId;
         }

@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebAnalytics.Abstraction;
 using WebAnalytics.Core.Entities;
+using WebAnalytics.Core.ValueTypes;
 using WebAnalytics.Web.Models;
+using WebAnalytics.Web.Services;
 
 namespace WebAnalytics.Web.Controllers
 {
@@ -17,11 +19,13 @@ namespace WebAnalytics.Web.Controllers
     {
         private readonly IEventWriter _eventWriter;
         private readonly IRecordingWriter _recordingWriter;
+        private readonly IDeviceService _deviceService;
 
-        public TrackingController(IEventWriter eventWriter, IRecordingWriter recordingWriter)
+        public TrackingController(IEventWriter eventWriter, IRecordingWriter recordingWriter, IDeviceService deviceService)
         {
             _eventWriter = eventWriter;
             _recordingWriter = recordingWriter;
+            _deviceService = deviceService;
         }
 
         // S - site
@@ -31,7 +35,7 @@ namespace WebAnalytics.Web.Controllers
         // W - width
         // C - additional event data
 
-        [HttpGet("event")]
+        [HttpPost("event")]
         public async Task<IActionResult> TrackEvent([FromQuery] EventRequest request)
         {
             var @event = new Event()
@@ -41,17 +45,11 @@ namespace WebAnalytics.Web.Controllers
                 Url = request.G,
                 Visitor = request.V,
                 Time = DateTimeOffset.Now,
-                Data = new Dictionary<string, object>()
-                {
-                    ["data"] = request.C,
-                    ["x"] = request.X,
-                    ["y"] = request.Y,
-                    ["width"] = request.W,
-                    ["browser"] = request.B
-                },
             };
 
-            await _eventWriter.WriteActionAsync(@event);
+            var deviceInfo = _deviceService.BuildFromEventData(request.U);
+
+            await _eventWriter.WriteActionAsync(@event, deviceInfo);
 
             return Ok();
         }

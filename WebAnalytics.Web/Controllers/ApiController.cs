@@ -1,6 +1,8 @@
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using WebAnalytics.Abstraction;
 using WebAnalytics.Core.Entities;
 using WebAnalytics.Core.Entities.Ontology;
@@ -13,12 +15,15 @@ namespace WebAnalytics.Web.Controllers
         private readonly IAnalyticsStore _store;
         private readonly IRdfMapper _rdfMapper;
         private readonly IHeatmapDrawer _heatmapDrawer;
+        private readonly IDistributedCache _cache;
 
-        public ApiController(IAnalyticsStore store, IRdfMapper rdfMapper, IHeatmapDrawer heatmapDrawer)
+        public ApiController(IAnalyticsStore store, IRdfMapper rdfMapper, IHeatmapDrawer heatmapDrawer,
+            IDistributedCache cache)
         {
             _store = store;
             _rdfMapper = rdfMapper;
             _heatmapDrawer = heatmapDrawer;
+            _cache = cache;
         }
 
 
@@ -42,7 +47,7 @@ namespace WebAnalytics.Web.Controllers
         }
 
         [HttpGet("/api/v1/site/{siteId}/session/{sessionId}/recording")]
-        public async Task<IActionResult> GetSessionRecording(string siteId,string sessionId)
+        public async Task<IActionResult> GetSessionRecording(string siteId, string sessionId)
         {
             return Ok(await _store.GetFragmentAsync(siteId, sessionId));
         }
@@ -56,9 +61,18 @@ namespace WebAnalytics.Web.Controllers
         [HttpGet("/api/v1/site/{siteId}/pages/{pageUri}/heatmap")]
         public async Task<IActionResult> GetHeatmap(string siteId, string pageUri)
         {
+            var key = $"heatmap_{siteId}_{WebUtility.UrlDecode(pageUri)}";
+            var cached = await _cache.GetAsync(key);
+            if (cached != null)
+            {
+                return new FileContentResult(cached, "img/png");
+            }
+
             var sessions = await _store.GetPageViews(siteId, WebUtility.UrlDecode(pageUri));
             var rdfSessions = _rdfMapper.MapFragmentsToRdf(sessions);
             var map = _heatmapDrawer.CreateHeatmap(rdfSessions);
+            await _cache.SetAsync(key, map,
+                new DistributedCacheEntryOptions() {AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(12)});
             return new FileContentResult(map, "img/png");
         }
     }
