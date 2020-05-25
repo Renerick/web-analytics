@@ -4,6 +4,7 @@ namespace WebAnalytics.Core.Entities
     {
         public string Target { get; set; }
         public int? Width { get; set; }
+        public int? Height { get; set; }
 
         public int? ClickX { get; set; }
         public int? ClickY { get; set; }

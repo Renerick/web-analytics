@@ -1,68 +1,87 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace WebAnalytics.Core.Entities.Ontology
 {
     public class RdfMapper : IRdfMapper
     {
-        public RdfSession MapToRdf(Session session)
-        {
-            throw new System.NotImplementedException();
-        }
+        private IDistributedCache _cache;
 
-        public Session MapFromRdf(RdfSession session)
+        public RdfMapper(IDistributedCache cache)
         {
-            throw new System.NotImplementedException();
+            _cache = cache;
         }
 
         public RdfSession[] MapFragmentsToRdf(RecordingFragment[] sessions)
         {
-            return sessions.Select(s => new RdfSession()
+            var serializer = new XmlSerializer(typeof(RdfSession));
+            return sessions.Select(s =>
             {
-                EndDateTime = s.Time,
-                Uid = s.SessionId,
-                Contains = new RegionList()
+                var result = _cache.GetString(s.SessionId + "_" + s.FragmentId);
+                if (result != null) return (RdfSession) serializer.Deserialize(new StringReader(result));
+
+                var rdfSession = new RdfSession()
                 {
-                    Regions = new List<RdfRegion>()
+                    EndDateTime = s.Time,
+                    Uid = s.SessionId,
+                    Contains = new RegionList()
                     {
-                        new RdfRegion()
+                        Regions = new List<RdfRegion>()
                         {
-                            Name = "Main",
-                            Contains = new VariationsCollection()
+                            new RdfRegion()
                             {
-                                Variations = new List<RdfVariation>()
+                                Name = "Main",
+                                Contains = new VariationsCollection()
                                 {
-                                    new RdfVariation()
+                                    Variations = new List<RdfVariation>()
                                     {
-                                        Width = 1920,
-                                        Contains = new EventsCollection()
+                                        new RdfVariation()
                                         {
-                                            Events = s.Frames.Frames.SelectMany(ConvertFrameToRdfEvent).ToList()
+                                            Width = s.Frames.Frames[0].Width.HasValue
+                                                ? s.Frames.Frames[0].Width.Value
+                                                : 0,
+                                            Contains = new EventsCollection()
+                                            {
+                                                Events = s.Frames.Frames
+                                                          .SelectMany(
+                                                              ConvertFrameToRdfEvent)
+                                                          .ToList()
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
+                };
+
+                var stringWriter = new StringWriter();
+                serializer.Serialize(stringWriter, rdfSession);
+                _cache.SetString(s.SessionId + "_" + s.FragmentId, stringWriter.ToString(),
+                    new DistributedCacheEntryOptions() {AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(30)});
+                return rdfSession;
             }).ToArray();
         }
 
         private IEnumerable<RdfEvent> ConvertFrameToRdfEvent(Frame frame, int i)
         {
             if (frame.MouseX.HasValue && frame.MouseY.HasValue)
-                yield return new MoveMouseEvent()
+                yield return new RdfMoveMouseEvent()
                 {
                     Name = $"Click_{i}_{frame.Target}_{frame.MouseX}_{frame.MouseY}",
-                    InRegionX = frame.MouseX.Value,
-                    InRegionY = frame.MouseY.Value
+                    InRegionX = frame.MouseX.Value + frame.ScrollX ?? 0,
+                    InRegionY = frame.MouseY.Value + frame.ScrollY ?? 0
                 };
             if (frame.ClickX.HasValue && frame.ClickY.HasValue)
                 yield return new RdfSingleClickMouseEvent()
                 {
                     Name = $"Click_{i}_{frame.Target}_{frame.MouseX}_{frame.MouseY}",
-                    InRegionX = frame.ClickX.Value,
-                    InRegionY = frame.ClickY.Value
+                    InRegionX = frame.ClickX.Value + frame.ScrollX ?? 0,
+                    InRegionY = frame.ClickY.Value + frame.ScrollY ?? 0
                 };
         }
     }

@@ -2,6 +2,9 @@
     import {Link, router} from "yrv";
     import {PlayIcon} from "svelte-feather-icons";
     import CountLabel from "../components/CountLabel.svelte";
+    import OsIcon from "../components/OsIcon.svelte";
+    import BrowserIcon from "../components/BrowserIcon.svelte";
+    import DeviceIcon from "../components/DeviceIcon.svelte";
 
     export let row;
 </script>
@@ -13,7 +16,7 @@
 </style>
 
 <td class="hidden lg:table-cell ">
-    <div class="flex">
+    <div on:click|stopPropagation class="flex">
         <Link href={`/site/${$router.params.siteId}/sessions/${row.sessionId}/recording`}
               class={'flex justify-center p-3 rounded-full hover:bg-gray-300 text-center w-10'}>
             <PlayIcon/>
@@ -27,8 +30,12 @@
         <CountLabel count="{row.recordingFragments.length}" forms={["страница", "страницы", "страниц"]}/>
     </div>
 </td>
-<td class="">
-    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-        Active
-    </span>
+<td>
+    <div class="flex">
+        <DeviceIcon class="flex-shrink-0 mr-2" size="24" systemType="{row.deviceInfo.deviceType}"/>
+        <OsIcon class="flex-shrink-0 h-5 w-5 mr-2" size="24"
+                systemType="{row.deviceInfo.operatingSystem.type}"/>
+        <BrowserIcon class="flex-shrink-0 h-5 w-5 mr-2" size="24"
+                     browserType="{row.deviceInfo.browser.type}"/>
+    </div>
 </td>

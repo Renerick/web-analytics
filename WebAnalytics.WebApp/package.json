@@ -40,6 +40,7 @@
     "svelte-grid": "1.10.6",
     "svelte-select": "3.4.0",
     "chart.js": "2.9.3",
-    "svelte-table": "^0.1.8"
+    "svelte-table": "^0.1.8",
+    "svelte-simple-modal": "^0.4.2"
   }
 }

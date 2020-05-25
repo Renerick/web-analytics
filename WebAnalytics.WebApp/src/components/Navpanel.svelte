@@ -34,7 +34,6 @@
         //     icon: SettingsIcon
         // }
     ];
-    $: console.log($router);
 
     let mobileActive = false;
 

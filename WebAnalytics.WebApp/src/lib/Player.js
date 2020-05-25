@@ -3,7 +3,7 @@ import Loop from './Loop'
 /** Player class */
 class Player {
     constructor(frame) {
-        this.frame = frame;
+        this.iframe = frame;
         this.el = this.document = null;
         this._fragmentIndex = 0;
         this._dataFrameIndex = 0;
@@ -102,16 +102,16 @@ class Player {
             this._dataFrameIndex = 0;
             return;
         }
-        if (this.frame.src !== "http://localhost:5000/proxy/" + currentFragment.url) {
+        if (this.iframe.src !== "http://localhost:5000/proxy/" + currentFragment.url) {
             let loaded = function (e) {
-                this.el = this.frame.contentWindow.document.scrollingElement;
-                this.document = this.frame.contentWindow.document;
+                this.el = this.iframe.contentWindow.document.scrollingElement;
+                this.document = this.iframe.contentWindow.document;
                 this.loading = false;
-                this.frame.removeEventListener("load", loaded);
+                this.iframe.removeEventListener("load", loaded);
             }
-            this.frame.src = "http://localhost:5000/proxy/" + currentFragment.url;
+            this.iframe.src = "http://localhost:5000/proxy/" + currentFragment.url;
             this.loading = true;
-            this.frame.addEventListener("load", loaded.bind(this));
+            this.iframe.addEventListener("load", loaded.bind(this));
             return;
         }
         if (this._dataFrameIndex === 0) { // initialize
@@ -121,6 +121,8 @@ class Player {
             if (pointer) pointer.remove();
         }
         const frame = currentFragment.frames.frames[this._dataFrameIndex]
+        this.iframe.width = frame.width;
+        this.iframe.height = frame.height;
         if (frame.mouseX !== null && frame.mouseY !== null) {
             this._mouseMove(frame.mouseX, frame.mouseY)
         }

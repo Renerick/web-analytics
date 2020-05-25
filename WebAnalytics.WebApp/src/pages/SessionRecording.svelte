@@ -1,5 +1,4 @@
 <script>
-    import SvelteTable from "svelte-table";
     import {onMount, onDestroy} from "svelte";
     import {Link, router} from "yrv";
     import ky from "ky";
@@ -37,7 +36,8 @@
     })
 </script>
 
-<iframe
-        style="position:absolute; width: 100%; height: 100vh"
+<iframe style=""
         title="viewport"
         bind:this={frame}></iframe>
+
+

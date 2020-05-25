@@ -13,7 +13,7 @@ namespace WebAnalytics.Core.Entities
         public string VisitorId { get; set; }
         public string SiteId { get; set; }
 
-        public TimeSpan Duration => RecordingFragments.Last().Time - this.Start;
+        public TimeSpan Duration => RecordingFragments[0].Time - this.Start;
 
         public double Activity => RecordingFragments
                                   .SelectMany(f => f.Frames.Frames)

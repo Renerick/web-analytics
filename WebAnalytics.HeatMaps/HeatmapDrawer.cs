@@ -25,10 +25,11 @@ namespace WebAnalytics.HeatMaps
             const int displayRadius = 40;
             const int groupRadius = 10;
 
-            var points = sessions.SelectMany(s => s.Contains.Regions)
-                                 .SelectMany(r => r.Contains.Variations)
-                                 .SelectMany(v => v.Contains.Events)
-                                 .Where(e => e is RdfSingleClickMouseEvent).ToList();
+            var variations = sessions.SelectMany(s => s.Contains.Regions)
+                                     .SelectMany(r => r.Contains.Variations).ToList();
+            var points = variations
+                         .SelectMany(v => v.Contains.Events)
+                         .Where(e => e is RdfSingleClickMouseEvent).ToList();
 
             int maxNearestCount = points.Count == 0
                 ? 0
@@ -36,8 +37,8 @@ namespace WebAnalytics.HeatMaps
                     .Count(p => Math.Abs(point.InRegionX - p.InRegionX) <= groupRadius &&
                         Math.Abs(point.InRegionY - p.InRegionY) <= groupRadius));
 
-            int width = 2000;
-            int height = 2000;
+            int width = variations.Max(v => (int) v.Width);
+            int height = points.Max(p => p.InRegionY + 100);
             using var img = new MagickImage(MagickColors.Transparent, width, height);
             var drawables = new Drawables();
             for (int y = 0; y < height; y++)
@@ -53,7 +54,6 @@ namespace WebAnalytics.HeatMaps
 
                     intensity = Math.Abs(intensity) < 0.01 ? 0 : intensity / maxNearestCount;
 
-                    // var pixelColorHsl = new ColorHSL(intensity * 240 / 255, .7, .5);
                     drawables.FillColor(_gradientProvider.GetColorAtValue(intensity)).Point(x, y);
                 }
             }

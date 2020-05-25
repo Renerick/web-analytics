@@ -44,6 +44,7 @@ namespace WebAnalytics.Core.Entities.Ontology
     public class EventsCollection : BaseRdfCollection
     {
         [XmlElement("SingleClickMouseEvent", typeof(RdfSingleClickMouseEvent))]
+        [XmlElement("MoveMouseEvent", typeof(RdfMoveMouseEvent))]
         [XmlElement("CommandEvent", typeof(RdfCommandEvent))]
         public List<RdfEvent> Events { get; set; }
     }

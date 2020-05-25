@@ -65,7 +65,7 @@ namespace WebAnalytics.Store.Postgres
             var lookup = new Dictionary<string, Session>();
             var result = new List<Session>();
             await _connection.QueryAsync<Session, RecordingFragment, Session>(
-                "SELECT * FROM (SELECT session.session_id, session.site_id, session.visitor_id, session.start, session.device_info, session_recording.recording_id as FragmentId , session_recording.session_id as SessionId, session_recording.time, session_recording.url, session_recording.recording_data as Frames FROM public.session JOIN session_recording  ON public.session_recording.session_id = public.session.session_id  WHERE session.site_id = @site_id) AS session_info ORDER BY session_info.time",
+                "SELECT * FROM (SELECT session.session_id, session.site_id, session.visitor_id, session.start, session.device_info, session_recording.recording_id as FragmentId , session_recording.session_id as SessionId, session_recording.time, session_recording.url, session_recording.recording_data as Frames FROM public.session JOIN session_recording  ON public.session_recording.session_id = public.session.session_id  WHERE session.site_id = @site_id) AS session_info ORDER BY session_info.time  DESC ",
                 (s, a) =>
                 {
                     if (!lookup.TryGetValue(s.SessionId, out var session))
