@@ -106,6 +106,7 @@ class Player {
             let loaded = function (e) {
                 this.el = this.iframe.contentWindow.document.scrollingElement;
                 this.document = this.iframe.contentWindow.document;
+                this.iframe.contentWindow.window._inPlayer = true;
                 this.loading = false;
                 this.iframe.removeEventListener("load", loaded);
             }

@@ -12,8 +12,10 @@
     import PageList from "./pages/PageList.svelte";
     import Heatmap from "./pages/Heatmap.svelte";
     import Redirector from "./components/Redirector.svelte";
+    import SiteSettings from "./pages/SiteSettings.svelte";
     import SidePanel from "./layouts/SidePanel.svelte";
     import TopBarWIthBackButton from "./layouts/TopBarWIthBackButton.svelte";
+    import CreateSite from "./pages/CreateSite.svelte";
 </script>
 
 <style>
@@ -41,6 +43,11 @@
             <Dashboard/>
         </SidePanel>
     </Route>
+    <Route exact path="/addSite">
+        <TopBarWIthBackButton backUrl="/">
+            <CreateSite/>
+        </TopBarWIthBackButton>
+    </Route>
     <Route exact path="/site/:siteId/sessions">
         <SidePanel>
             <SessionList/>
@@ -54,6 +61,11 @@
     <Route exact path="/site/:siteId/pages">
         <SidePanel>
             <PageList/>
+        </SidePanel>
+    </Route>
+    <Route exact path="/site/:siteId/settings">
+        <SidePanel>
+            <SiteSettings/>
         </SidePanel>
     </Route>
     <Route path="/site/:siteId/pages/:url/heatmap">

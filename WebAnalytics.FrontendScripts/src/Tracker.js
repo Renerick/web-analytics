@@ -83,6 +83,11 @@ class Tracker {
     }
 
     _init() {
+        if (window._inPlayer) {
+            console.log("In a player, disabling tracker")
+            return;
+        }
+
         this.getUserCookie(true);
 
         if (!this.getUserCookie()) return;

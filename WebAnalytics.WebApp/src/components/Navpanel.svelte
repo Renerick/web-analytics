@@ -1,6 +1,6 @@
 <script>
     import {Router, Route, Link, router} from "yrv";
-    import {ActivityIcon, XIcon, SettingsIcon, LayoutIcon, FileTextIcon} from "svelte-feather-icons";
+    import {ActivityIcon, XIcon, SettingsIcon, LayoutIcon, FileTextIcon, CodeIcon} from "svelte-feather-icons";
     import SiteSelector from './SiteSelector.svelte';
     import {fade, fly, slide} from 'svelte/transition';
     import semlytics from "images/semlytics-logo-color-small.svg";
@@ -161,15 +161,31 @@
                 <SiteSelector/>
             </div>
             <!-- Sidebar component, swap this element with another sidebar if you like -->
-            <nav class="flex-1 px-2 bg-white">
-                {#each items as item}
-                    <Link href={item.url.replace(":siteId", siteId)} class="link">
+            <nav class="flex-1 flex flex-col bg-white">
+                <div class="px-2 pb-4 mb-4 border-b">
+                    <Link href="/addSite" class="link">
+                            <span class=" mr-4 h-6 w-6 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-600 transition ease-in-out duration-150">
+                                <CodeIcon size="24"/>
+                            </span>
+                        Добавить сайт
+                    </Link>
+                    <Link href={"/site/:siteId/settings".replace(":siteId", siteId)} class="link">
+                            <span class=" mr-4 h-6 w-6 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-600 transition ease-in-out duration-150">
+                                <SettingsIcon size="24"/>
+                            </span>
+                        Настройки
+                    </Link>
+                </div>
+                <div class="px-2">
+                    {#each items as item}
+                        <Link href={item.url.replace(":siteId", siteId)} class="link">
                             <span class=" mr-4 h-6 w-6 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-600 transition ease-in-out duration-150">
                                 <svelte:component this={item.icon} size="24"/>
                             </span>
-                        {item.label}
-                    </Link>
-                {/each}
+                            {item.label}
+                        </Link>
+                    {/each}
+                </div>
             </nav>
         </div>
     </div>
