@@ -80,8 +80,8 @@ namespace WebAnalytics.Core.Entities.Ontology
                 yield return new RdfSingleClickMouseEvent()
                 {
                     Name = $"Click_{i}_{frame.Target}_{frame.MouseX}_{frame.MouseY}",
-                    InRegionX = frame.ClickX.Value + frame.ScrollX ?? 0,
-                    InRegionY = frame.ClickY.Value + frame.ScrollY ?? 0
+                    InRegionX = frame.ClickX.Value + (frame.ScrollX ?? 0),
+                    InRegionY = frame.ClickY.Value + (frame.ScrollY ?? 0)
                 };
         }
     }
