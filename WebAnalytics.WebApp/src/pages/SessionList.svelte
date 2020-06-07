@@ -20,7 +20,7 @@
 
     function showSessionInfo(session) {
         console.log(session)
-        open(SessionInfo, {session: session}, {closeButton: false,  styleContent: {padding: 0}})
+        open(SessionInfo, {session: session}, {closeButton: false, styleContent: {padding: 0}})
     }
 
     async function fetchData(siteId) {
@@ -69,10 +69,15 @@
 
 <LoaderFrame func={async () => await fetchData($router.params.siteId)}>
     <div class="flex flex-col">
-        <div class="align-middle inline-block min-w-full shadow overflow-x-auto sm:rounded-lg border-b border-gray-200">
-            {#if sessions.length === 0}
-                <div class="w-full text-center text-gray-600">Ни одной сессии пока не было записано</div>
-            {:else}
+
+        {#if sessions.length === 0}
+            <div class="w-full text-center text-gray-600">Ни одной сессии пока не было записано</div>
+        {:else}
+            <div class="mb-6">
+                <Stats sessionCount="{sessions.length}" averageDepth="{(sessions.reduce((acc, el) => acc + el.recordingFragments.length, 0) / sessions.length).toFixed(1)}" uniqueVisitors="{(new Set(sessions.map(s => s.visitorId))).size}"/>
+            </div>
+
+            <div class="align-middle inline-block min-w-full shadow overflow-x-auto sm:rounded-lg border-b border-gray-200">
                 <SvelteTable
                         classNameTable="min-w-full"
                         {columns}
@@ -85,8 +90,9 @@
                         <SessionListTableRow {row}/>
                     </tr>
                 </SvelteTable>
-            {/if}
-        </div>
+            </div>
+
+        {/if}
     </div>
 </LoaderFrame>
 

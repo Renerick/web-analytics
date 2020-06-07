@@ -121,8 +121,8 @@ namespace WebAnalytics.Store.Postgres
         {
             var sessionId = await
                 _connection.QueryFirstOrDefaultAsync<string>(
-                    "SELECT session_id FROM session WHERE visitor_id = @visitor_id AND @time - start < interval '00:20:00' ORDER BY start DESC",
-                    new {visitor_id = visitorId, time = DateTimeOffset.Now});
+                    "SELECT session_id FROM session WHERE visitor_id = @visitor_id AND site_id = @site_id AND @time - start < interval '00:20:00' ORDER BY start DESC",
+                    new {visitor_id = visitorId, site_id = siteId, time = DateTimeOffset.Now});
             if (sessionId != null) return sessionId;
 
             sessionId = Guid.NewGuid().ToString();

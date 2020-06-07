@@ -2,8 +2,9 @@ import Loop from './Loop'
 
 /** Player class */
 class Player {
-    constructor(frame) {
+    constructor(frame, endpoint) {
         this.iframe = frame;
+        this.endpoint = endpoint;
         this.el = this.document = null;
         this._fragmentIndex = 0;
         this._dataFrameIndex = 0;
@@ -102,15 +103,14 @@ class Player {
             this._dataFrameIndex = 0;
             return;
         }
-        if (this.iframe.src !== "http://localhost:5000/proxy/" + currentFragment.url) {
+        if (this.iframe.src !== this.endpoint + "/proxy/" + currentFragment.url) {
             let loaded = function (e) {
                 this.el = this.iframe.contentWindow.document.scrollingElement;
                 this.document = this.iframe.contentWindow.document;
-                this.iframe.contentWindow.window._inPlayer = true;
                 this.loading = false;
                 this.iframe.removeEventListener("load", loaded);
             }
-            this.iframe.src = "http://localhost:5000/proxy/" + currentFragment.url;
+            this.iframe.src = this.endpoint + "/proxy/" + currentFragment.url;
             this.loading = true;
             this.iframe.addEventListener("load", loaded.bind(this));
             return;

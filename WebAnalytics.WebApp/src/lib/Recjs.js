@@ -11,7 +11,7 @@ class Recjs {
         this.frame = frame
         this.fps = fps || 30
 
-        this.player = new Player(this.frame)
+        this.player = new Player(this.frame, window.location.origin)
     }
 }
 

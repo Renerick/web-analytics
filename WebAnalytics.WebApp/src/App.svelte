@@ -35,6 +35,7 @@
 
 <svelte:head>
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <title>Semlytics</title>
 </svelte:head>
 
 <Router>

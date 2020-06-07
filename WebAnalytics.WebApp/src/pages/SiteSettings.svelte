@@ -1,7 +1,7 @@
 <script>
     import {router} from 'yrv';
 
-    let label = "<script src='http:\/\/localhost:5000/recorder.js'><\/script><script>const recjs = new Tracker({fps: 30, site: '" + $router.params.siteId + "', endpoint: 'http:\/\/localhost:5000' })" + "<\/script>";
+    let label = "<script src='" + window.location.origin +"/recorder.js'><\/script><script>const recjs = new Tracker({fps: 30, site: '" + $router.params.siteId + "', endpoint: '" + window.location.origin + "' })" + "<\/script>";
 </script>
 
 <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">

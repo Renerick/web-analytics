@@ -83,7 +83,8 @@ class Tracker {
     }
 
     _init() {
-        if (window._inPlayer) {
+        console.log("Testing url")
+        if (/^https?:\/\/(?:[A-Za-z0-9-]+\.)*[A-Za-z0-9]+:\d{1,5}\/proxy\/https?:\/\//i.test(window.location.href)) {
             console.log("In a player, disabling tracker")
             return;
         }
