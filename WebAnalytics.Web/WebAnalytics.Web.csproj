@@ -20,5 +20,29 @@
       <PackageReference Include="ProxyKit" Version="2.3.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" Include="..\WebAnalytics.WebApp\public\8db8827e55777c4130001707b7feca78.svg">
+        <Link>public\8db8827e55777c4130001707b7feca78.svg</Link>
+      </Content>
+      <Content CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" Include="..\WebAnalytics.WebApp\public\8eefcca0fbe0c8cdd6ee81d294cdb326.svg">
+        <Link>public\8eefcca0fbe0c8cdd6ee81d294cdb326.svg</Link>
+      </Content>
+      <Content CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" Include="..\WebAnalytics.WebApp\public\b732827e5efc12b1501586272d7c968d.svg">
+        <Link>public\b732827e5efc12b1501586272d7c968d.svg</Link>
+      </Content>
+      <Content CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" Include="..\WebAnalytics.WebApp\public\bundle.js">
+        <Link>public\bundle.js</Link>
+      </Content>
+      <Content CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" Include="..\WebAnalytics.WebApp\public\index.html">
+        <Link>public\index.html</Link>
+      </Content>
+      <Content CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" Include="..\WebAnalytics.WebApp\public\recorder.js">
+        <Link>public\recorder.js</Link>
+      </Content>
+      <Content CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" Include="..\WebAnalytics.WebApp\public\recorder.js.map">
+        <Link>public\recorder.js.map</Link>
+      </Content>
+    </ItemGroup>
+
 
 </Project>

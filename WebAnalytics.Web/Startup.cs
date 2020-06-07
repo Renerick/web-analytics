@@ -69,7 +69,7 @@ namespace WebAnalytics.Web
 
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "../WebAnalytics.WebApp/dist";
+                configuration.RootPath = "./public";
             });
 
             services.AddControllers().AddJsonOptions(options =>
